@@ -70,7 +70,7 @@ namespace AlphabetCipher.Console
                 Consol.WriteLine();
             }
 
-            Consol.WriteLine("Usage: dotnet run {methodName} {input1} {input2}");
+            Consol.WriteLine("Usage: dotnet run {methodName} {inputs ...}");
             foreach (var method in methods)
             {
                 Consol.WriteLine("  " + method.Name + ": ");

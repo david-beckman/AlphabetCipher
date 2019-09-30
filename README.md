@@ -1,2 +1,2 @@
-# Alphabet Cipher
-Implementation of the coding kata as specified by [https://github.com/gigasquid/wonderland-clojure-katas/tree/master/alphabet-cipher]
+# Alphabet (Vigenère) Cipher
+Implementation of the coding kata as specified by <https://github.com/gigasquid/wonderland-clojure-katas/tree/master/alphabet-cipher>. Note that this is just the [Vigenère Cipher](https://en.wikipedia.org/wiki/Vigenère_cipher).
