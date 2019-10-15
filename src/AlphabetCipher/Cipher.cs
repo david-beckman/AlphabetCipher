@@ -123,13 +123,13 @@ namespace AlphabetCipher
 
             for (int i = 0; i < text.Length; i++)
             {
-                var index = Alphabet.IndexOf(text[i]);
+                var index = Alphabet.IndexOf(text[i], StringComparison.Ordinal);
                 if (index < 0)
                 {
                     throw new NotSupportedException("Unsupported Character: " + text[i]);
                 }
 
-                var offset = Alphabet.IndexOf(key[i % key.Length]);
+                var offset = Alphabet.IndexOf(key[i % key.Length], StringComparison.Ordinal);
                 if (offset < 0)
                 {
                     throw new NotSupportedException("Unsupported Character: " + key[i % key.Length]);

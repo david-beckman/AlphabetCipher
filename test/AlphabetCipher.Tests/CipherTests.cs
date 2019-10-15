@@ -1,7 +1,12 @@
-using Xunit;
-
+//-----------------------------------------------------------------------
+// <copyright file="CipherTests.cs" company="N/A">
+//     Copyright © 2019 David Beckman. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
 namespace AlphabetCipher.Tests
 {
+    using Xunit;
+
     public class CipherTests
     {
         private Cipher cipher = new Cipher();
@@ -11,7 +16,7 @@ namespace AlphabetCipher.Tests
         [InlineData("scones", "meetmebythetree", "egsgqwtahuiljgs")]
         public void Encode(string key, string clearText, string expectedCipherText)
         {
-            Assert.Equal(cipher.Encode(key, clearText), expectedCipherText);
+            Assert.Equal(this.cipher.Encode(key, clearText), expectedCipherText);
         }
 
         [Theory]
@@ -19,7 +24,7 @@ namespace AlphabetCipher.Tests
         [InlineData("scones", "egsgqwtahuiljgs", "meetmebythetree")]
         public void Decode(string key, string cipherText, string expectedClearText)
         {
-            Assert.Equal(cipher.Decode(key, cipherText), expectedClearText);
+            Assert.Equal(this.cipher.Decode(key, cipherText), expectedClearText);
         }
 
         [Theory]
@@ -28,7 +33,7 @@ namespace AlphabetCipher.Tests
         [InlineData("hfnlphoontutufa", "hellofromrussia", "abcabcx")]
         public void Decipher(string cipherText, string clearText, string expectedKey)
         {
-            Assert.Equal(cipher.Decipher(cipherText, clearText), expectedKey);
+            Assert.Equal(this.cipher.Decipher(cipherText, clearText), expectedKey);
         }
     }
 }

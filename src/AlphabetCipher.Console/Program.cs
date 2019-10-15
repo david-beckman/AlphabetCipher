@@ -1,84 +1,94 @@
-﻿using System;
-using System.Linq;
-using System.Reflection;
-
-using Consol = System.Console;
-
+﻿//-----------------------------------------------------------------------
+// <copyright file="Program.cs" company="N/A">
+//     Copyright © 2019 David Beckman. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
 namespace AlphabetCipher.Console
 {
-    class Program
-    {
-        static int Main(string[] args)
-        {
-            return new Program(args).Start();
-        }
+    using System;
+    using System.Linq;
+    using System.Reflection;
+    using System.Threading;
 
-        private readonly string[] args;
+    using Console = System.Console;
+
+    internal class Program
+    {
         private readonly MethodInfo[] methods;
+
         private readonly Cipher cipher;
 
-        private Program(string[] args)
+        private Program()
         {
-            this.args = args;
             this.methods = typeof(Cipher).GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public);
             this.cipher = new Cipher();
         }
 
-        private int Start()
+        private static IFormatProvider CurrentFormatProvider => Thread.CurrentThread.CurrentCulture;
+
+        private static int Main(string[] args)
+        {
+            return new Program().Start(args);
+        }
+
+        private int Start(string[] args)
         {
             if (args == null || args.Length < 1)
             {
-                return DisplayHelp("Insufficient parameters passed: " + args.Length);
+                return this.DisplayHelp(string.Format(Program.CurrentFormatProvider, Strings.Arg_InsufficientParameters, args.Length));
             }
 
-            var method = FindMethod(args[0]);
+            var method = this.FindMethod(args[0]);
             if (method == null)
             {
-                return DisplayHelp("Unknown method: " + args[0]);
+                return this.DisplayHelp(string.Format(Program.CurrentFormatProvider, Strings.Arg_UnknownMethod, args[0]));
             }
 
             var parameters = method.GetParameters();
             if (parameters.Length + 1 != args.Length)
             {
-                return DisplayHelp("Insufficient parameters passed for the " + method.Name + " method: " + args.Length);
+                return this.DisplayHelp(string.Format(
+                    Program.CurrentFormatProvider,
+                    Strings.Arg_InsufficientMethodParameters,
+                    method.Name,
+                    args.Length));
             }
 
             try
             {
-                Consol.WriteLine(method.Invoke(this.cipher, args.Skip(1).ToArray()));
+                Console.WriteLine(method.Invoke(this.cipher, args.Skip(1).ToArray()));
             }
-            catch (Exception e)
+            catch (TargetInvocationException e)
             {
-                Consol.Error.WriteLine(e);
-                Consol.Error.WriteLine();
-                return DisplayHelp(null);
+                Console.Error.WriteLine(e.InnerException);
+                Console.Error.WriteLine();
+                return this.DisplayHelp(null);
             }
-            
+
             return 0;
         }
 
         private MethodInfo FindMethod(string name)
         {
-            return methods.FirstOrDefault(method => method.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+            return this.methods.FirstOrDefault(method => method.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
         }
 
-        int DisplayHelp(string message)
+        private int DisplayHelp(string message)
         {
             if (!string.IsNullOrEmpty(message))
             {
-                Consol.WriteLine(message);
-                Consol.WriteLine();
+                Console.WriteLine(message);
+                Console.WriteLine();
             }
 
-            Consol.WriteLine("Usage: dotnet run {methodName} {inputs ...}");
-            foreach (var method in methods)
+            Console.WriteLine(Strings.Usage_Header);
+            foreach (var method in this.methods)
             {
-                Consol.WriteLine("  " + method.Name + ": ");
-                foreach (var parameter in method.GetParameters())
-                {
-                    Consol.WriteLine("    " + parameter.Name);
-                }
-                Consol.WriteLine();
+                Console.WriteLine(string.Format(
+                    Program.CurrentFormatProvider,
+                    Strings.Usage_Method,
+                    method.Name,
+                    string.Join(" ", method.GetParameters().Select(parameter => parameter.Name))));
             }
 
             return 1;
